@@ -1,0 +1,22 @@
+@petwell_back_HostAddress = http://localhost:5137
+
+GET {{petwell_back_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
+POST {{petwell_back_HostAddress}}/api/auth/login
+Content-Type: application/json
+{
+  "email": "admin@admin.com",
+  "password": "!Qwerty123"
+}
+###
+POST {{petwell_back_HostAddress}}/api/auth/sign-up
+Content-Type: application/json
+{
+  "name": "Dorin",
+  "email": "admin@admin.com",
+  "phone":"+37367674300",
+  "password": "!Qwerty123",
+  "repeatedpassword":"!Qwerty123"
+}

@@ -1,0 +1,48 @@
+﻿using MongoDB.Driver;
+using petwell_back.Data;
+using petwell_back.Models.DTOs.Requests;
+using petwell_back.Models.Entities;
+using petwell_back.Services.Interfaces;
+using petwell_back.Shared.Common;
+
+namespace petwell_back.Services.Implementations
+{
+     public class AssistanceService(MongoDbService mongoDbService) : IAssistanceService
+     {
+          private readonly IMongoCollection<ServiceDb>? dbCollection = mongoDbService.Database?.GetCollection<ServiceDb>("Services");
+          public async Task<ApiResponse?> CreateMedicalAssistanceService(AssistanceServiceRequestDto request, string userId)
+          {
+               if (dbCollection == null) return null;
+               var service = new ServiceDb
+               {
+                    UserId = userId,
+                    Company = request.Company,
+                    Type = request.Type,
+                    Location = request.Location,
+                    Animal = request.Animal,
+                    Description = request.Description,
+                    Prices = request.Prices.Select(p => new ServicePrice
+                    {
+                         Name = p.Name,
+                         Price = p.Price,
+                         Currency = p.Currency
+                    }).ToList(),
+                    Contacts = new Contacts
+                    {
+                         Address = request.Contacts.Address,
+                         Phone = request.Contacts.Phone,
+                         Email = request.Contacts.Email,
+                         Website = request.Contacts.Website
+                    }
+               };
+               await dbCollection.InsertOneAsync(service);
+               var response = new ApiResponse
+               {
+                    Success = true,
+                    Message = "Service created successfully.",
+                    Route = "/"
+               };
+               return response;
+          }
+     }
+}
