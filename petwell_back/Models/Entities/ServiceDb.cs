@@ -33,6 +33,15 @@ namespace petwell_back.Models.Entities
           [BsonElement("contacts")]
           public required Contacts Contacts { get; set; } = new() { Phone = string.Empty };
 
+          [BsonElement("specialities")]
+          public required List<string> Specialities { get; set; } = new();
+
+          [BsonElement("doctor")]
+          public required string Doctor { get; set; }
+
+          [BsonElement("comments")]
+          public List<Comment>? Comments { get; set; }
+
           [BsonElement("createdAt"), BsonRepresentation(BsonType.DateTime)]
           public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
      }
@@ -62,5 +71,20 @@ namespace petwell_back.Models.Entities
 
           [BsonElement("website"), BsonRepresentation(BsonType.String)]
           public string? Website { get; set; }
+     }
+
+     public class Comment
+     {
+          [BsonElement("_userId"), BsonRepresentation(BsonType.ObjectId)]
+          public required string UserId { get; set; }
+
+          [BsonElement("rating"), BsonRepresentation(BsonType.Int32)]
+          public required int Rating { get; set; }
+
+          [BsonElement("content"), BsonRepresentation(BsonType.String)]
+          public string? Content { get; set; }
+
+          [BsonElement("createdAt"), BsonRepresentation(BsonType.DateTime)]
+          public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
      }
 }

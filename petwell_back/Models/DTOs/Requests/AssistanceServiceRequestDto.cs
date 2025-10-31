@@ -29,6 +29,17 @@ namespace petwell_back.Models.DTOs.Requests
 
           [Required(ErrorMessage = "Contact information is required")]
           public required ContactsDto Contacts { get; set; } = new() { Phone = "" };
+
+          [Required(ErrorMessage = "At least one speciality is required")]
+          [MinLength(1, ErrorMessage = "At least one speciality must be specified")]
+          public required List<string> Specialities { get; set; } = new();
+
+          [Required(ErrorMessage = "Doctor and its description is required")]
+          [StringLength(500, ErrorMessage = "Doctor description cannot exceed 500 characters")]
+          public required string Doctor { get; set; }
+
+          public List<CommentDto>? Comments { get; set; }
+
      }
 
      public class ServicePriceDto
@@ -53,7 +64,6 @@ namespace petwell_back.Models.DTOs.Requests
           public string? Address { get; set; }
 
           [Required(ErrorMessage = "Phone number is required")]
-          //[RegularExpression(@"^\+?[\d\s-()]+$", ErrorMessage = "Invalid phone number format")]
           [StringLength(20, MinimumLength = 5, ErrorMessage = "Phone number must be between 5 and 20 characters")]
           public required string Phone { get; set; }
 
@@ -61,8 +71,20 @@ namespace petwell_back.Models.DTOs.Requests
           [StringLength(100, ErrorMessage = "Email cannot exceed 100 characters")]
           public string? Email { get; set; }
 
-          [Url(ErrorMessage = "Invalid website URL format")]
           [StringLength(200, ErrorMessage = "Website URL cannot exceed 200 characters")]
           public string? Website { get; set; }
+     }
+
+     public class CommentDto
+     {
+          [Required(ErrorMessage = "Comment author is required")]
+          [StringLength(100, ErrorMessage = "Author name cannot exceed 100 characters")]
+          public required string Author { get; set; }
+
+          [Range(1, 5, ErrorMessage = "Rating must be between 1 and 5")]
+          public required int Rating { get; set; }
+
+          [StringLength(1000, ErrorMessage = "Comment text must max 1000 characters")]
+          public string? Content { get; set; } = string.Empty;
      }
 }

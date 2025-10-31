@@ -33,7 +33,15 @@ namespace petwell_back.Services.Implementations
                          Phone = request.Contacts.Phone,
                          Email = request.Contacts.Email,
                          Website = request.Contacts.Website
-                    }
+                    },
+                    Specialities = request.Specialities,
+                    Doctor = request.Doctor,
+                    Comments = request.Comments?.Select(c => new Comment
+                    {
+                         UserId = c.Author,
+                         Rating = c.Rating,
+                         Content = c.Content,
+                    }).ToList(),
                };
                await dbCollection.InsertOneAsync(service);
                var response = new ApiResponse
