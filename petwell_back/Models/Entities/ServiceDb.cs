@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using petwell_back.Models.DTOs.Requests;
 
 namespace petwell_back.Models.Entities
 {
@@ -34,7 +35,7 @@ namespace petwell_back.Models.Entities
           public required Contacts Contacts { get; set; } = new() { Phone = string.Empty };
 
           [BsonElement("specialities")]
-          public required List<string> Specialities { get; set; } = new();
+          public required List<Speciality> Specialities { get; set; } = new();
 
           [BsonElement("doctor")]
           public required string Doctor { get; set; }
@@ -86,5 +87,11 @@ namespace petwell_back.Models.Entities
 
           [BsonElement("createdAt"), BsonRepresentation(BsonType.DateTime)]
           public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+     }
+
+     public class Speciality
+     {
+          [BsonElement("name"), BsonRepresentation(BsonType.String)]
+          public required string Name { get; set; }
      }
 }

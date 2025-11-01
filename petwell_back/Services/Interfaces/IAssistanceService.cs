@@ -7,5 +7,6 @@ namespace petwell_back.Services.Interfaces
      public interface IAssistanceService
      {
           Task<ApiResponse?> CreateMedicalAssistanceService(AssistanceServiceRequestDto request, string userId);
+          Task<ApiResponse?> GetAssistanceServices();
      }
 }

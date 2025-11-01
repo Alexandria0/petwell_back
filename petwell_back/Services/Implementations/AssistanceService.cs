@@ -34,7 +34,10 @@ namespace petwell_back.Services.Implementations
                          Email = request.Contacts.Email,
                          Website = request.Contacts.Website
                     },
-                    Specialities = request.Specialities,
+                    Specialities = request.Specialities.Select(s => new Speciality
+                    {
+                         Name = s.Name
+                    }).ToList(),
                     Doctor = request.Doctor,
                     Comments = request.Comments?.Select(c => new Comment
                     {
@@ -51,6 +54,20 @@ namespace petwell_back.Services.Implementations
                     Route = "/"
                };
                return response;
+          }
+
+          public async Task<ApiResponse?> GetAssistanceServices()
+          {
+               if (dbCollection == null) return null;
+
+               var services = await dbCollection.Find(_ => true).ToListAsync();
+
+               return new ApiResponse
+               {
+                    Success = true,
+                    Message = "Services retrieved successfully",
+                    Data = services
+               };
           }
      }
 }

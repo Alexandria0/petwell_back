@@ -35,5 +35,21 @@ namespace petwell_back.Controllers
 
                return Ok(response);
           }
+
+          [Authorize]
+          [HttpGet("get-services")]
+          public async Task<ActionResult<ApiResponse>> GetServices()
+          {
+               var response = await assistanceService.GetAssistanceServices();
+
+               if (response == null)
+                    return BadRequest(new ApiResponse
+                    {
+                         Success = false,
+                         Message = "Failed to retrieve services.",
+                    });
+
+               return Ok(response);
+          }
      }
 }

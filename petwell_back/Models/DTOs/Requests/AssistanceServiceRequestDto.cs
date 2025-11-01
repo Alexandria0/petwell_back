@@ -32,7 +32,7 @@ namespace petwell_back.Models.DTOs.Requests
 
           [Required(ErrorMessage = "At least one speciality is required")]
           [MinLength(1, ErrorMessage = "At least one speciality must be specified")]
-          public required List<string> Specialities { get; set; } = new();
+          public required List<SpecialityDto> Specialities { get; set; } = new();
 
           [Required(ErrorMessage = "Doctor and its description is required")]
           [StringLength(500, ErrorMessage = "Doctor description cannot exceed 500 characters")]
@@ -86,5 +86,12 @@ namespace petwell_back.Models.DTOs.Requests
 
           [StringLength(1000, ErrorMessage = "Comment text must max 1000 characters")]
           public string? Content { get; set; } = string.Empty;
+     }
+
+     public class SpecialityDto
+     {
+          [Required(ErrorMessage = "Speciality name is required")]
+          [StringLength(100, ErrorMessage = "Speciality name cannot exceed 100 characters")]
+          public required string Name { get; set; }
      }
 }
