@@ -69,5 +69,70 @@ namespace petwell_back.Services.Implementations
                     Data = services
                };
           }
+
+          public Task<ApiResponse?> GetMyAssistanceServices(string userId)
+          {
+               if (dbCollection == null) return null;
+
+               var services = dbCollection.Find(s => s.UserId == userId).ToListAsync();
+
+               return services.ContinueWith<ApiResponse?>(t =>
+               {
+                    if (t.Result == null || !t.Result.Any())
+                    {
+                         return null;
+                    }
+                    return new ApiResponse
+                    {
+                         Success = true,
+                         Message = "User's services retrieved successfully.",
+                         Data = t.Result
+                    };
+               });
+          }
+
+          public Task<ApiResponse?> GetAssistanceServiceById(string serviceId)
+          {
+               if (dbCollection == null) return null;
+
+               var service = dbCollection.Find(s => s.Id == serviceId).FirstOrDefaultAsync();
+
+               return service.ContinueWith<ApiResponse?>(t =>
+               {
+                    if (t.Result == null)
+                    {
+                         return new ApiResponse
+                         {
+                              Success = false,
+                              Message = "Service not found",
+                              Errors = new List<string> { "No service found with the provided ID." }
+                         };
+                    }
+                    return new ApiResponse
+                    {
+                         Success = true,
+                         Message = "Service retrieved successfully",
+                         Data = t.Result
+                    };
+               });
+          }
+
+          public Task<ApiResponse?> RemoveAssistanceService(string userId, string serviceId)
+          {
+               if (dbCollection == null) return null;
+               var deleteResult = dbCollection.DeleteOneAsync(s => s.Id == serviceId && s.UserId == userId);
+               return deleteResult.ContinueWith<ApiResponse?>(t =>
+               {
+                    if (t.Result.DeletedCount == 0)
+                    {
+                         return null;
+                    }
+                    return new ApiResponse
+                    {
+                         Success = true,
+                         Message = "Service removed successfully"
+                    };
+               });
+          }
      }
 }

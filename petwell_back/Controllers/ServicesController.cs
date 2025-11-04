@@ -36,7 +36,6 @@ namespace petwell_back.Controllers
                return Ok(response);
           }
 
-          [Authorize]
           [HttpGet("get-services")]
           public async Task<ActionResult<ApiResponse>> GetServices()
           {
@@ -49,6 +48,67 @@ namespace petwell_back.Controllers
                          Message = "Failed to retrieve services.",
                     });
 
+               return Ok(response);
+          }
+
+          [Authorize(Roles = "Business")]
+          [HttpGet("my-services")]
+          public async Task<ActionResult<ApiResponse>> GetMyServices()
+          {
+               var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+               if (string.IsNullOrEmpty(userId))
+                    return Unauthorized(new ApiResponse
+                    {
+                         Success = false,
+                         Message = "You are not authorized.",
+                    });
+
+               var response = await assistanceService.GetMyAssistanceServices(userId);
+
+               if (response == null)
+                    return BadRequest(new ApiResponse
+                    {
+                         Success = false,
+                         Message = "Failed to retrieve your services.",
+                    });
+               return Ok(response);
+          }
+
+          [HttpGet("get-service/{serviceId}")]
+          public async Task<ActionResult<ApiResponse>> GetServiceById(string serviceId)
+          {
+               var response = await assistanceService.GetAssistanceServiceById(serviceId);
+               if (response == null)
+                    return BadRequest(new ApiResponse
+                    {
+                         Success = false,
+                         Message = "Failed to retrieve service.",
+                    });
+               return Ok(response);
+          }
+
+          [Authorize(Roles = "Business")]
+          [HttpDelete("remove-service/{serviceId}")]
+          public async Task<ActionResult<ApiResponse>> RemoveService(string serviceId)
+          {
+               var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+               if (string.IsNullOrEmpty(userId))
+                    return Unauthorized(new ApiResponse
+                    {
+                         Success = false,
+                         Message = "You are not authorized.",
+                    });
+
+               var response = await assistanceService.RemoveAssistanceService(userId, serviceId);
+
+               if (response == null)
+                    return BadRequest(new ApiResponse
+                    {
+                         Success = false,
+                         Message = "Failed to remove service.",
+                    });
                return Ok(response);
           }
      }
