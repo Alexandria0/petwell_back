@@ -56,17 +56,58 @@ namespace petwell_back.Services.Implementations
                return response;
           }
 
-          public async Task<ApiResponse?> GetAssistanceServices()
+          public async Task<ApiResponse?> GetAssistanceServices(ServicesPageRequestDto request)
           {
                if (dbCollection == null) return null;
 
-               var services = await dbCollection.Find(_ => true).ToListAsync();
+               var filterBuilder = Builders<ServiceDb>.Filter;
+               var filter = filterBuilder.Empty;
+
+               if (!string.IsNullOrWhiteSpace(request.SearchTerm))
+               {
+                    filter &= filterBuilder.Or(
+                        filterBuilder.Regex(s => s.Company, new MongoDB.Bson.BsonRegularExpression(request.SearchTerm, "i")),
+                        filterBuilder.Regex(s => s.Description, new MongoDB.Bson.BsonRegularExpression(request.SearchTerm, "i"))
+                    );
+               }
+
+               if (!string.IsNullOrWhiteSpace(request.Type))
+               {
+                    filter &= filterBuilder.Eq(s => s.Type, request.Type);
+               }
+
+               if (!string.IsNullOrWhiteSpace(request.Animal))
+               {
+                    filter &= filterBuilder.Eq(s => s.Animal, request.Animal);
+               }
+
+               if (!string.IsNullOrWhiteSpace(request.Location))
+               {
+                    filter &= filterBuilder.Regex(s => s.Location, new MongoDB.Bson.BsonRegularExpression(request.Location, "i"));
+               }
+
+               var skip = (request.Page - 1) * request.PageSize;
+
+               var totalCount = await dbCollection.CountDocumentsAsync(filter);
+
+               // Get paginated and sorted data
+               var services = await dbCollection.Find(filter)
+                   .Skip(skip)
+                   .Limit(request.PageSize)
+                   .ToListAsync();
 
                return new ApiResponse
                {
                     Success = true,
                     Message = "Services retrieved successfully",
-                    Data = services
+                    Data = new
+                    {
+                         Items = services,
+                         TotalCount = totalCount,
+                         CurrentPage = request.Page,
+                         PageSize = request.PageSize,
+                         TotalPages = (int)Math.Ceiling(totalCount / (double)request.PageSize)
+                    }
                };
           }
 

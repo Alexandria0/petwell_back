@@ -37,9 +37,9 @@ namespace petwell_back.Controllers
           }
 
           [HttpGet("get-services")]
-          public async Task<ActionResult<ApiResponse>> GetServices()
+          public async Task<ActionResult<ApiResponse>> GetServices([FromQuery] ServicesPageRequestDto request)
           {
-               var response = await assistanceService.GetAssistanceServices();
+               var response = await assistanceService.GetAssistanceServices(request);
 
                if (response == null)
                     return BadRequest(new ApiResponse
@@ -89,7 +89,7 @@ namespace petwell_back.Controllers
           }
 
           [Authorize(Roles = "Business")]
-          [HttpDelete("remove-service/{serviceId}")]
+          [HttpDelete("delete-service/{serviceId}")]
           public async Task<ActionResult<ApiResponse>> RemoveService(string serviceId)
           {
                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
